@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arton One</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2F1EB;
+    --card:#FFFFFF;
+    --ink:#142E27;
+    --pine:#1C4A3D;
+    --pine-2:#2A5D4E;
+    --moss:#6B7F74;
+    --brass:#8F6B2A;
+    --brass-2:#B08A45;
+    --line:#E2DFD5;
+    --red:#8C3B2E;
+    --ok:#2E6B4F;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);font-size:14px;-webkit-font-smoothing:antialiased}
+  button{font-family:inherit;cursor:pointer}
+  .oculto{display:none!important}
+
+  /* ============ LOGIN ============ */
+  .login{min-height:100vh;display:grid;grid-template-columns:1.05fr 1fr}
+  .login-marca{background:var(--ink);color:#F7F6F1;display:flex;flex-direction:column;justify-content:center;padding:8vh 7vw;position:relative}
+  .logo{display:flex;align-items:baseline;gap:10px}
+  .logo .a1{font-size:30px;font-weight:800;letter-spacing:-0.02em}
+  .logo .a2{font-size:30px;font-weight:400;color:var(--brass-2)}
+  .login-marca h1{font-size:clamp(28px,3vw,40px);font-weight:800;letter-spacing:-0.02em;line-height:1.15;margin-top:8vh;max-width:420px}
+  .login-marca p{margin-top:16px;color:#C9D6CE;font-size:15px;line-height:1.65;max-width:420px}
+  .login-marca .rodape{position:absolute;bottom:32px;font-size:12px;color:#8FA69B}
+  .login-form{display:flex;align-items:center;justify-content:center;padding:40px}
+  .form-caixa{width:min(380px,100%)}
+  .form-caixa h2{font-size:22px;font-weight:800;letter-spacing:-0.01em}
+  .form-caixa .sub{color:var(--moss);font-size:13.5px;margin:6px 0 28px}
+  .campo{margin-bottom:16px}
+  .campo label{display:block;font-size:12.5px;font-weight:600;color:var(--moss);margin-bottom:6px}
+  .campo input{width:100%;border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;background:var(--card)}
+  .campo input:focus{outline:2px solid var(--pine);outline-offset:1px}
+  .btn{width:100%;background:var(--pine);color:#fff;border:none;border-radius:8px;padding:13px;font-size:14.5px;font-weight:600;margin-top:8px}
+  .btn:hover{background:var(--pine-2)}
+  .form-nota{margin-top:20px;font-size:12px;color:var(--moss);text-align:center}
+
+  /* ============ APP CHROME ============ */
+  .topo{position:sticky;top:0;z-index:50;background:var(--ink);color:#F7F6F1;display:flex;align-items:center;gap:28px;padding:0 26px;height:58px}
+  .topo .logo .a1,.topo .logo .a2{font-size:19px}
+  .topo-nav{display:flex;gap:4px;flex:1}
+  .topo-nav button{background:none;border:none;color:#A9BDB3;font-size:13px;font-weight:600;padding:8px 14px;border-radius:6px}
+  .topo-nav button:hover{color:#F7F6F1}
+  .topo-nav button.on{background:#24443B;color:#F7F6F1}
+  .topo-dir{display:flex;align-items:center;gap:16px}
+  .sino{position:relative;background:none;border:none;color:#A9BDB3;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+  .sino:hover{background:#24443B;color:#fff}
+  .sino .badge{position:absolute;top:4px;right:5px;width:8px;height:8px;border-radius:50%;background:var(--brass-2)}
+  .usuario{display:flex;align-items:center;gap:10px}
+  .avatar{width:32px;height:32px;border-radius:50%;background:var(--brass);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+  .usuario .nome{font-size:13px;font-weight:600;line-height:1.2}
+  .usuario .tipo{font-size:11px;color:#8FA69B}
+  .painel-notif{position:absolute;top:64px;right:22px;width:320px;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 32px rgba(20,46,39,.18);padding:8px;z-index:60}
+  .painel-notif .item{padding:12px;border-radius:8px;font-size:13px;line-height:1.5}
+  .painel-notif .item:hover{background:var(--paper)}
+  .painel-notif .item b{display:block;font-weight:600}
+  .painel-notif .item small{color:var(--moss)}
+
+  .subnav{background:var(--card);border-bottom:1px solid var(--line);padding:0 26px;display:flex;gap:2px;align-items:center;min-height:46px}
+  .subnav button{background:none;border:none;font-size:13px;font-weight:600;color:var(--moss);padding:14px 14px 12px;border-bottom:2px solid transparent}
+  .subnav button.on{color:var(--ink);border-color:var(--brass)}
+  .subnav .direita{margin-left:auto;font-size:12.5px;color:var(--moss);display:flex;align-items:center;gap:8px}
+  .subnav select{font-family:inherit;font-size:12.5px;border:1px solid var(--line);border-radius:6px;padding:6px 8px;background:var(--card);color:var(--ink)}
+
+  .conteudo{max-width:1280px;margin:0 auto;padding:26px 26px 70px}
+  .titulo-pagina{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+  .titulo-pagina h2{font-size:22px;font-weight:800;letter-spacing:-0.015em}
+  .titulo-pagina .desc{font-size:13px;color:var(--moss)}
+
+  /* ============ COMPONENTES ============ */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+  .kpi .r{font-size:12px;font-weight:600;color:var(--moss)}
+  .kpi .v{font-size:22px;font-weight:800;letter-spacing:-0.015em;margin-top:4px}
+  .kpi .d{font-size:12px;color:var(--moss);margin-top:3px}
+  .kpi .d.up{color:var(--ok);font-weight:600}
+  .kpi .d.down{color:var(--red);font-weight:600}
+
+  .grade{display:grid;gap:14px;margin-bottom:14px}
+  .g2{grid-template-columns:1fr 1fr}
+  .g32{grid-template-columns:1.4fr 1fr}
+  .g23{grid-template-columns:1fr 1.4fr}
+  .cartao{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+  .cartao h3{font-size:14px;font-weight:700;letter-spacing:-0.01em}
+  .cartao .sub{font-size:12px;color:var(--moss);margin-top:2px;margin-bottom:14px}
+
+  .donut-wrap{display:flex;align-items:center;gap:24px}
+  .donut{width:150px;height:150px;border-radius:50%;position:relative;flex:none}
+  .donut::after{content:attr(data-centro);position:absolute;inset:22%;background:var(--card);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;text-align:center;white-space:pre-line;line-height:1.3}
+  .leg{flex:1;display:flex;flex-direction:column;gap:7px}
+  .leg .l{display:flex;align-items:center;gap:8px;font-size:12.5px}
+  .leg .l .c{width:10px;height:10px;border-radius:3px;flex:none}
+  .leg .l .n{flex:1;color:#33463F}
+  .leg .l .p{font-weight:700}
+
+  .hbars{display:flex;flex-direction:column;gap:10px}
+  .hbar .topo-h{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px}
+  .hbar .topo-h .n{font-weight:600}
+  .hbar .topo-h .v{color:var(--moss)}
+  .hbar .trilho{height:9px;background:var(--paper);border-radius:5px;overflow:hidden}
+  .hbar .fill{height:100%;background:var(--pine);border-radius:5px}
+  .hbar .fill.b{background:var(--brass)}
+
+  .vbars{display:flex;align-items:flex-end;gap:10px;height:170px;padding-top:8px}
+  .vb{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+  .vb .par{display:flex;gap:3px;align-items:flex-end;height:100%;width:100%;justify-content:center}
+  .vb .bR{width:9px;background:var(--pine);border-radius:2px 2px 0 0}
+  .vb .bD{width:9px;background:#C9A468;border-radius:2px 2px 0 0}
+  .vb .m{font-size:10px;color:var(--moss);font-weight:600}
+  .leg-linha{display:flex;gap:18px;font-size:12px;color:#33463F;margin-top:10px}
+  .leg-linha span{display:flex;gap:6px;align-items:center}
+  .leg-linha i{width:10px;height:10px;border-radius:3px}
+
+  table.tb{width:100%;border-collapse:collapse;font-size:13px}
+  table.tb th{font-size:11.5px;font-weight:700;color:var(--moss);text-transform:uppercase;letter-spacing:.03em;text-align:left;padding:10px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+  table.tb td{padding:11px 10px;border-bottom:1px solid #EFEDE5;white-space:nowrap}
+  table.tb tr:last-child td{border-bottom:none}
+  table.tb .num{text-align:right}
+  table.tb th.num{text-align:right}
+  table.tb tr.clicavel{cursor:pointer}
+  table.tb tr.clicavel:hover td{background:#FAF9F4}
+  .pill{display:inline-block;font-size:11px;font-weight:700;border-radius:20px;padding:3px 10px}
+  .pill.ok{background:#E4EFE8;color:var(--ok)}
+  .pill.warn{background:#F4EBDD;color:var(--brass)}
+  .pill.neutro{background:#ECEAE2;color:var(--moss)}
+  .pill.red{background:#F3E3DF;color:var(--red)}
+  .pos{color:var(--ok);font-weight:600}
+  .neg{color:var(--red);font-weight:600}
+  .mini{font-size:11.5px;color:var(--moss)}
+  .link-doc{color:var(--pine);font-weight:600;text-decoration:none;border:none;background:none;font-size:12.5px;padding:0}
+  .link-doc:hover{text-decoration:underline}
+
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .chip-f{border:1px solid var(--line);background:var(--card);border-radius:20px;padding:7px 14px;font-size:12.5px;font-weight:600;color:var(--moss)}
+  .chip-f.on{background:var(--pine);border-color:var(--pine);color:#fff}
+
+  /* ============ HUB ============ */
+  .hub{max-width:1080px;margin:0 auto;padding:48px 26px 80px}
+  .hub .ola{font-size:14px;color:var(--moss)}
+  .hub h2{font-size:30px;font-weight:800;letter-spacing:-0.02em;margin:4px 0 6px}
+  .hub .res{font-size:14px;color:#33463F;margin-bottom:34px}
+  .hub .res b{font-weight:700}
+  .hub-grade{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .hub-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px;text-align:left;display:flex;flex-direction:column;gap:10px;transition:border-color .15s, transform .15s}
+  .hub-card:hover{border-color:var(--pine);transform:translateY(-2px)}
+  .hub-card .ic{width:40px;height:40px;border-radius:10px;background:#EAF0EC;color:var(--pine);display:flex;align-items:center;justify-content:center}
+  .hub-card .ic svg{width:22px;height:22px}
+  .hub-card h3{font-size:17px;font-weight:800;letter-spacing:-0.01em}
+  .hub-card p{font-size:13px;color:var(--moss);line-height:1.55;flex:1}
+  .hub-card .valor{font-size:15px;font-weight:700;color:var(--pine)}
+
+  /* ============ FAMÍLIA ============ */
+  .geracao{margin-bottom:22px}
+  .geracao h4{font-size:12px;font-weight:700;color:var(--brass);letter-spacing:.04em;text-transform:uppercase;margin-bottom:10px}
+  .membros{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .membro{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+  .membro .nm{font-weight:700;font-size:14.5px}
+  .membro .info{font-size:12px;color:var(--moss);margin:3px 0 8px}
+  .membro .tot{font-size:15px;font-weight:800;color:var(--pine)}
+  .membro details{margin-top:8px}
+  .membro summary{font-size:12px;font-weight:600;color:var(--brass);cursor:pointer;list-style:none}
+  .membro summary::before{content:'+ '}
+  .membro details[open] summary::before{content:'− '}
+  .membro .classes{margin-top:8px;display:flex;flex-direction:column;gap:4px}
+  .membro .classes div{display:flex;justify-content:space-between;font-size:12px;color:#33463F}
+  .membro .classes b{font-weight:600}
+
+  /* ============ MODAIS ============ */
+  .sombra{position:fixed;inset:0;background:rgba(20,46,39,.5);z-index:80;display:flex;align-items:center;justify-content:center;padding:26px}
+  .modal{background:var(--card);border-radius:14px;width:min(860px,100%);max-height:88vh;overflow:auto;padding:0}
+  .modal-cab{position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--line);padding:18px 24px;display:flex;align-items:center;justify-content:space-between;z-index:2}
+  .modal-cab h3{font-size:17px;font-weight:800;letter-spacing:-0.01em}
+  .modal-cab .mini{margin-top:2px}
+  .fechar{background:none;border:1px solid var(--line);border-radius:8px;width:32px;height:32px;font-size:16px;color:var(--moss)}
+  .fechar:hover{border-color:var(--pine);color:var(--ink)}
+  .modal-abas{display:flex;gap:2px;padding:0 24px;border-bottom:1px solid var(--line)}
+  .modal-abas button{background:none;border:none;font-size:13px;font-weight:600;color:var(--moss);padding:12px 12px 10px;border-bottom:2px solid transparent}
+  .modal-abas button.on{color:var(--ink);border-color:var(--brass)}
+  .modal-corpo{padding:20px 24px 26px}
+  .ficha{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 20px}
+  .ficha .campo-f{border-bottom:1px solid #EFEDE5;padding-bottom:8px}
+  .ficha .campo-f .r{font-size:11px;font-weight:700;color:var(--moss);text-transform:uppercase;letter-spacing:.03em}
+  .ficha .campo-f .v{font-size:13.5px;font-weight:600;margin-top:3px}
+  .fotos{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .foto{aspect-ratio:4/3;border-radius:8px;background:linear-gradient(135deg,#E8E6DD,#D7D4C8);display:flex;align-items:center;justify-content:center;color:var(--moss);font-size:12px;font-weight:600}
+  .comprovante{border:1px dashed var(--line);border-radius:10px;padding:22px;font-family:'Inter',monospace}
+  .comprovante .lin{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid #EFEDE5}
+  .comprovante .lin:last-child{border-bottom:none}
+  .comprovante .lin b{font-weight:700}
+  .selo-pago{display:inline-block;border:2px solid var(--ok);color:var(--ok);border-radius:8px;padding:4px 12px;font-weight:800;font-size:13px;transform:rotate(-4deg);margin-top:14px}
+
+  .rodape-demo{position:fixed;bottom:12px;right:14px;font-size:11px;color:var(--moss);background:var(--card);border:1px solid var(--line);border-radius:20px;padding:5px 12px;z-index:40}
+
+  @media(max-width:980px){
+    .login{grid-template-columns:1fr}
+    .login-marca{padding:48px 28px}
+    .kpis{grid-template-columns:1fr 1fr}
+    .g2,.g32,.g23{grid-template-columns:1fr}
+    .hub-grade{grid-template-columns:1fr}
+    .membros{grid-template-columns:1fr}
+    .ficha{grid-template-columns:1fr 1fr}
+    .topo{overflow-x:auto}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<div class="login" id="tela-login">
+  <div class="login-marca">
+    <div class="logo"><span class="a1">arton</span><span class="a2">one</span></div>
+    <h1>Todo o patrimônio da família em um só lugar.</h1>
+    <p>Consolidação patrimonial, gestão imobiliária, contas e investimentos, com o padrão de atendimento Arton.</p>
+    <div class="rodape">Arton Advisors · Ambiente de demonstração</div>
+  </div>
+  <div class="login-form">
+    <form class="form-caixa" id="form-login">
+      <h2>Acessar minha conta</h2>
+      <div class="sub">Utilize as credenciais fornecidas pelo seu banker.</div>
+      <div class="campo">
+        <label for="usuario">Usuário</label>
+        <input id="usuario" type="text" placeholder="cliente@familia.com.br" autocomplete="off">
+      </div>
+      <div class="campo">
+        <label for="senha">Senha</label>
+        <input id="senha" type="password" placeholder="••••••••" autocomplete="off">
+      </div>
+      <button class="btn" type="submit">Entrar</button>
+      <div class="form-nota">Ambiente de demonstração: qualquer usuário e senha dão acesso ao cliente modelo.</div>
+    </form>
+  </div>
+</div>
+
+<!-- ================= APP ================= -->
+<div id="app" class="oculto">
+  <header class="topo">
+    <div class="logo"><span class="a1">arton</span><span class="a2">one</span></div>
+    <nav class="topo-nav" id="nav-modulos">
+      <button data-mod="hub" class="on">Início</button>
+      <button data-mod="patrimonio">Consolidação Patrimonial</button>
+      <button data-mod="imob">Gestão Imobiliária</button>
+      <button data-mod="contas">Gestão de Contas</button>
+      <button data-mod="invest">Investimentos</button>
+    </nav>
+    <div class="topo-dir">
+      <button class="sino" id="btn-sino" aria-label="Notificações">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        <span class="badge"></span>
+      </button>
+      <div class="usuario">
+        <div class="avatar">CM</div>
+        <div><div class="nome">Cliente Modelo Arton</div><div class="tipo">Conta família</div></div>
+      </div>
+    </div>
+  </header>
+  <div class="painel-notif oculto" id="painel-notif">
+    <div class="item"><b>Contrato com revisional em 60 dias</b>Ed. Vila Nova Conceição, Cj. 112. Time de locação já iniciou a análise.<br><small>hoje, 09:12</small></div>
+    <div class="item"><b>Relatório mensal disponível</b>Relatório de gestão imobiliária de agosto publicado em Documentos.<br><small>ontem, 18:40</small></div>
+  </div>
+
+  <div id="vistas"></div>
+</div>
+
+<div class="rodape-demo">Arton One · demonstração com dados fictícios</div>
+
+<script>
+/* ============================================================
+   DADOS FICTÍCIOS (ordem de grandeza do cliente modelo)
+============================================================ */
+const BR = v => v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const R$ = v => 'R$ ' + BR(v);
+const Rmi = v => 'R$ ' + (v/1e6).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1}) + ' mi';
+const pct = v => v.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1}) + '%';
+
+const PATRIMONIO = {
+  classes: [
+    {n:'Investimentos financeiros', v:598400000, qtd:44, cor:'#1C4A3D'},
+    {n:'Imóveis',                   v:111200000, qtd:52, cor:'#8F6B2A'},
+    {n:'Participações societárias', v:24500000,  qtd:5,  cor:'#5E8A76'},
+    {n:'Veículos e embarcações',    v:4300000,   qtd:9,  cor:'#B08A45'},
+    {n:'Offshore e exterior',       v:2800000,   qtd:2,  cor:'#8AA697'},
+    {n:'Outros bens',               v:1200000,   qtd:3,  cor:'#C9C4B4'}
+  ]
+};
+PATRIMONIO.total = PATRIMONIO.classes.reduce((s,c)=>s+c.v,0);
+
+const FAMILIA = [
+  {ger:'1ª geração', membros:[
+    {nm:'Roberto Andrade', info:'71 anos · Casado · Comunhão parcial de bens', tot:412300000,
+     classes:{'Investimentos':348200000,'Imóveis':52400000,'Participações':9800000,'Veículos':1400000,'Exterior':500000}},
+    {nm:'Helena Andrade', info:'68 anos · Casada · Comunhão parcial de bens', tot:186500000,
+     classes:{'Investimentos':142600000,'Imóveis':38900000,'Participações':3600000,'Veículos':900000,'Exterior':500000}}
+  ]},
+  {ger:'2ª geração', membros:[
+    {nm:'Ricardo Andrade', info:'44 anos · Casado · Separação total de bens', tot:78400000,
+     classes:{'Investimentos':58300000,'Imóveis':12700000,'Participações':6200000,'Veículos':1200000}},
+    {nm:'Camila Andrade Souza', info:'41 anos · Casada · Comunhão parcial de bens', tot:56900000,
+     classes:{'Investimentos':42100000,'Imóveis':7200000,'Participações':4900000,'Veículos':800000,'Exterior':1800000,'Outros':100000}},
+    {nm:'Fernando Souza', info:'45 anos · Casado · Comunhão parcial de bens', tot:3100000,
+     classes:{'Investimentos':2600000,'Veículos':500000}}
+  ]},
+  {ger:'3ª geração', membros:[
+    {nm:'Beatriz Andrade', info:'19 anos · Solteira', tot:3800000, classes:{'Investimentos':3800000}},
+    {nm:'Gustavo Andrade', info:'16 anos · Solteiro', tot:1200000, classes:{'Investimentos':1200000}},
+    {nm:'Sofia Souza', info:'12 anos · Solteira', tot:200000, classes:{'Investimentos':200000}}
+  ]}
+];
+
+const BENS = [
+  {cl:'Investimentos', n:'Arton Torino FI RF Créd Priv LP', v:82400000},
+  {cl:'Investimentos', n:'NTN-B 2035', v:19200000},
+  {cl:'Investimentos', n:'CDB liquidez diária · banco de primeira linha', v:12100000},
+  {cl:'Investimentos', n:'Fundo multimercado macro', v:9800000},
+  {cl:'Investimentos', n:'Carteira de ações Brasil', v:8400000},
+  {cl:'Imóveis', n:'Ed. Faria Lima Corporate · Cj. 82', v:9800000},
+  {cl:'Imóveis', n:'Casa Jardim Europa', v:8500000},
+  {cl:'Imóveis', n:'Galpão logístico Jundiaí', v:12500000},
+  {cl:'Imóveis', n:'Prédio Pinheiros', v:7200000},
+  {cl:'Imóveis', n:'Fazenda Ribeirão Claro', v:6800000},
+  {cl:'Participações', n:'Andrade Participações Ltda (holding)', v:14200000},
+  {cl:'Participações', n:'SPE Incorporação Vila Olímpia · 12%', v:4600000},
+  {cl:'Participações', n:'Distribuidora ABC · 8%', v:5700000},
+  {cl:'Veículos', n:'Range Rover Autobiography', v:980000},
+  {cl:'Veículos', n:'Porsche 911 Carrera', v:1150000},
+  {cl:'Veículos', n:'Lancha Intermarine 60', v:1600000},
+  {cl:'Exterior', n:'Conta offshore · Delaware LLC', v:2800000},
+  {cl:'Outros', n:'Coleção de arte', v:900000},
+  {cl:'Outros', n:'Adiantamentos e créditos a receber', v:300000}
+];
+
+const IMOB = {
+  kpi:{qtd:52, projetos:2, valor:111200000, aluguelMes:512400, ocupacao:88.4},
+  tipos:[['Apartamento',17],['Loja',9],['Casa',7],['Terreno',6],['Sala',5],['Galpão',3],['Prédio',3],['Rural',2]],
+  finalidade:[
+    {n:'Locação', p:71.8, cor:'#1C4A3D'},
+    {n:'Valorização e venda', p:14.2, cor:'#8F6B2A'},
+    {n:'Em desenvolvimento', p:7.6, cor:'#5E8A76'},
+    {n:'Uso pessoal', p:6.4, cor:'#B08A45'}
+  ],
+  setor:[
+    {n:'Residencial', p:38.5, cor:'#1C4A3D'},
+    {n:'Comercial', p:34.2, cor:'#8F6B2A'},
+    {n:'Industrial e logístico', p:16.8, cor:'#5E8A76'},
+    {n:'Rural', p:10.5, cor:'#B08A45'}
+  ],
+  valorizacao:[['Residencial',64.2],['Comercial',88.7],['Industrial e logístico',79.4],['Rural',241.0],['Consolidado',89.6]],
+  potencial:[['Residencial',96.2],['Comercial',82.4],['Industrial e logístico',100.0],['Rural',71.0]],
+  administradoras:[['Gestão Arton (direta)',18],['Imobiliária parceira A',9],['Imobiliária parceira B',7],['Imobiliária parceira C',4],['Outras',5]],
+  imoveis:[
+    {cid:'São Paulo', tipo:'Sala', nome:'Ed. Faria Lima Corporate · Cj. 82', setor:'Comercial', status:'Locado', aq:'12/03/2015', va:5200000, vm:9800000, m2:31200, alu:52000, desp:0, area:'314 m²', mat:'112.484', cart:'4º RI de São Paulo', imob:'Gestão Arton (direta)', ini:'01/08/2023', fim:'31/07/2028', idx:'IPCA', quartos:'—', vagas:'6'},
+    {cid:'São Paulo', tipo:'Casa', nome:'Casa Jardim Europa', setor:'Residencial', status:'Uso pessoal', aq:'20/06/2004', va:2100000, vm:8500000, m2:17700, alu:0, desp:14500, area:'480 m²', mat:'58.201', cart:'1º RI de São Paulo', imob:'—', ini:'—', fim:'—', idx:'—', quartos:'5', vagas:'4'},
+    {cid:'Jundiaí', tipo:'Galpão', nome:'Galpão logístico Jundiaí', setor:'Industrial e logístico', status:'Locado', aq:'05/02/2018', va:7400000, vm:12500000, m2:2980, alu:98000, desp:0, area:'4.190 m²', mat:'77.930', cart:'2º RI de Jundiaí', imob:'Gestão Arton (direta)', ini:'01/02/2022', fim:'31/01/2032', idx:'IPCA', quartos:'—', vagas:'—'},
+    {cid:'São Paulo', tipo:'Prédio', nome:'Prédio Pinheiros', setor:'Comercial', status:'Locado', aq:'14/09/2010', va:2800000, vm:7200000, m2:9600, alu:41500, desp:6200, area:'750 m²', mat:'91.377', cart:'10º RI de São Paulo', imob:'Imobiliária parceira A', ini:'15/05/2024', fim:'14/05/2029', idx:'IGP-M', quartos:'—', vagas:'8'},
+    {cid:'São Paulo', tipo:'Apartamento', nome:'Ed. Vila Nova Conceição · Cj. 112', setor:'Residencial', status:'Locado', aq:'01/11/2016', va:3100000, vm:5400000, m2:24500, alu:24500, desp:0, area:'220 m²', mat:'103.552', cart:'15º RI de São Paulo', imob:'Imobiliária parceira B', ini:'01/12/2022', fim:'30/11/2026', idx:'IPCA', quartos:'3', vagas:'3'},
+    {cid:'São Paulo', tipo:'Loja', nome:'Loja Oscar Freire', setor:'Comercial', status:'Locado', aq:'22/04/2012', va:1900000, vm:4600000, m2:28800, alu:32000, desp:0, area:'160 m²', mat:'66.410', cart:'13º RI de São Paulo', imob:'Imobiliária parceira A', ini:'01/03/2021', fim:'28/02/2031', idx:'IGP-M', quartos:'—', vagas:'—'},
+    {cid:'Campinas', tipo:'Apartamento', nome:'Ed. Cambuí · Apto 141', setor:'Residencial', status:'Locado', aq:'10/01/2019', va:980000, vm:1450000, m2:11150, alu:7200, desp:0, area:'130 m²', mat:'44.208', cart:'3º RI de Campinas', imob:'Imobiliária parceira C', ini:'01/07/2024', fim:'30/06/2027', idx:'IPCA', quartos:'3', vagas:'2'},
+    {cid:'São Paulo', tipo:'Sala', nome:'Ed. Berrini Office · Cj. 1204', setor:'Comercial', status:'Vago', aq:'01/06/2014', va:1200000, vm:1650000, m2:16500, alu:0, desp:4800, area:'100 m²', mat:'88.921', cart:'4º RI de São Paulo', imob:'Imobiliária parceira B', ini:'—', fim:'—', idx:'—', quartos:'—', vagas:'2'},
+    {cid:'Ribeirão Preto', tipo:'Rural', nome:'Fazenda Ribeirão Claro', setor:'Rural', status:'Arrendado', aq:'01/01/2001', va:1400000, vm:6800000, m2:null, alu:38000, desp:0, area:'186 ha', mat:'12.007', cart:'1º RI de Ribeirão Preto', imob:'Gestão Arton (direta)', ini:'01/01/2024', fim:'31/12/2028', idx:'Saca de soja', quartos:'—', vagas:'—'},
+    {cid:'Guarujá', tipo:'Apartamento', nome:'Ed. Enseada · Apto 71', setor:'Residencial', status:'Uso pessoal', aq:'15/12/2008', va:850000, vm:2100000, m2:12350, alu:0, desp:5100, area:'170 m²', mat:'39.114', cart:'RI do Guarujá', imob:'—', ini:'—', fim:'—', idx:'—', quartos:'4', vagas:'2'},
+    {cid:'São Paulo', tipo:'Terreno', nome:'Terreno Granja Viana', setor:'Residencial', status:'Em desenvolvimento', aq:'01/08/2021', va:2600000, vm:3400000, m2:1130, alu:0, desp:2100, area:'3.000 m²', mat:'70.556', cart:'RI de Cotia', imob:'—', ini:'—', fim:'—', idx:'—', quartos:'—', vagas:'—'},
+    {cid:'Sorocaba', tipo:'Loja', nome:'Centro Comercial Sorocaba · Loja 3', setor:'Comercial', status:'Locado', aq:'01/05/2017', va:640000, vm:920000, m2:9200, alu:6400, desp:0, area:'100 m²', mat:'51.882', cart:'2º RI de Sorocaba', imob:'Imobiliária parceira C', ini:'01/09/2023', fim:'31/08/2028', idx:'IPCA', quartos:'—', vagas:'—'}
+  ]
+};
+
+const CONTAS = {
+  kpi:{rec:486200, desp:-302400, saldo:6420000, tesouraria:1180000},
+  meses:['Out-25','Nov-25','Dez-25','Jan-26','Fev-26','Mar-26','Abr-26','Mai-26','Jun-26','Jul-26','Ago-26','Set-26'],
+  rec:[402,418,655,395,410,441,428,463,447,470,452,486],
+  des:[288,301,512,276,290,318,298,312,305,331,296,302],
+  categorias:[
+    {n:'Imóveis, condomínios e IPTU', p:31.4, cor:'#1C4A3D'},
+    {n:'Folha residencial e serviços', p:19.8, cor:'#8F6B2A'},
+    {n:'Cartões de crédito', p:17.2, cor:'#5E8A76'},
+    {n:'Educação e saúde', p:11.6, cor:'#B08A45'},
+    {n:'Doações e família', p:8.9, cor:'#8AA697'},
+    {n:'Outros', p:11.1, cor:'#C9C4B4'}
+  ],
+  atividades:[
+    'Efetuar · Pagamento de honorários advocatícios',
+    'Conciliar · Transferências não identificadas (2)',
+    'Renovar · Seguro frota familiar',
+    'Enviar · Prestação de contas mensal à família'
+  ],
+  movs:[
+    {d:'28/09/2026', c:'Aluguel recebido · Galpão Jundiaí', v:98000, banco:'Banco A', conta:'Tesouraria'},
+    {d:'27/09/2026', c:'Condomínio · Casa Jardim Europa', v:-8200, banco:'Banco A', conta:'Tesouraria'},
+    {d:'26/09/2026', c:'Aluguel recebido · Ed. Faria Lima Cj. 82', v:52000, banco:'Banco A', conta:'Tesouraria'},
+    {d:'25/09/2026', c:'Folha residencial', v:-46300, banco:'Banco B', conta:'Família'},
+    {d:'24/09/2026', c:'IPTU · parcela 09', v:-12480, banco:'Banco A', conta:'Tesouraria'},
+    {d:'23/09/2026', c:'Cartão de crédito · fatura', v:-51900, banco:'Banco B', conta:'Família'},
+    {d:'22/09/2026', c:'Aluguel recebido · Loja Oscar Freire', v:32000, banco:'Banco A', conta:'Tesouraria'},
+    {d:'20/09/2026', c:'Arrendamento · Fazenda Ribeirão Claro', v:38000, banco:'Banco A', conta:'Tesouraria'},
+    {d:'19/09/2026', c:'Manutenção predial · Prédio Pinheiros', v:-6200, banco:'Banco A', conta:'Tesouraria'},
+    {d:'18/09/2026', c:'Mensalidades escolares', v:-18400, banco:'Banco B', conta:'Família'},
+    {d:'17/09/2026', c:'Doação · instituto da família', v:-25000, banco:'Banco B', conta:'Família'},
+    {d:'16/09/2026', c:'Aluguel recebido · Ed. Vila Nova Conceição', v:24500, banco:'Banco A', conta:'Tesouraria'}
+  ]
+};
+
+const INVEST = {
+  total:598400000, rent12:12.4, cdi12:11.1, liquidezD30:22.5,
+  bancos:[
+    {n:'Banco de investimentos A', v:214300000},
+    {n:'Private banking B', v:152100000},
+    {n:'Plataforma C', v:98400000},
+    {n:'Private banking D', v:73900000},
+    {n:'Banco E', v:59700000}
+  ],
+  classes:[
+    {n:'Renda fixa pós-fixada', p:41.5, cor:'#1C4A3D'},
+    {n:'Inflação (IPCA+)', p:17.8, cor:'#5E8A76'},
+    {n:'Multimercados', p:13.6, cor:'#8F6B2A'},
+    {n:'Renda variável Brasil', p:9.4, cor:'#B08A45'},
+    {n:'Fundos imobiliários', p:6.2, cor:'#8AA697'},
+    {n:'Internacional', p:8.3, cor:'#37596B'},
+    {n:'Alternativos', p:3.2, cor:'#C9C4B4'}
+  ],
+  evolucao:[521,528,534,540,551,548,562,571,578,584,590,598],
+  meses:['Out','Nov','Dez','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set'],
+  posicoes:[
+    {n:'Arton Torino FI RF Créd Priv LP', cl:'RF pós-fixada', banco:'Banco de investimentos A', v:82400000, r:'112% CDI'},
+    {n:'NTN-B 2035', cl:'Inflação', banco:'Private banking B', v:19200000, r:'IPCA + 5,9%'},
+    {n:'NTN-B 2045', cl:'Inflação', banco:'Private banking B', v:16900000, r:'IPCA + 6,1%'},
+    {n:'CDB liquidez diária', cl:'RF pós-fixada', banco:'Banco E', v:12100000, r:'101% CDI'},
+    {n:'Fundo multimercado macro', cl:'Multimercados', banco:'Plataforma C', v:9800000, r:'+14,2% 12m'},
+    {n:'Carteira de ações Brasil', cl:'RV Brasil', banco:'Banco de investimentos A', v:8400000, r:'+18,7% 12m'},
+    {n:'Fundo imobiliário logístico', cl:'FII', banco:'Plataforma C', v:7300000, r:'DY 9,4% a.a.'},
+    {n:'ETF global equities', cl:'Internacional', banco:'Private banking D', v:6900000, r:'+11,3% 12m (USD)'},
+    {n:'Fundo de crédito privado high grade', cl:'RF pós-fixada', banco:'Private banking D', v:6200000, r:'CDI + 1,8%'},
+    {n:'Fundo de participações (FIP)', cl:'Alternativos', banco:'Banco de investimentos A', v:5400000, r:'em curva'}
+  ]
+};
+
+/* ============================================================
+   HELPERS DE UI
+============================================================ */
+const $$ = s => document.querySelector(s);
+function donut(dados, centro){
+  let acc=0, stops=[];
+  dados.forEach(d=>{ stops.push(`${d.cor} ${acc}% ${acc+d.p}%`); acc+=d.p; });
+  return `<div class="donut-wrap">
+    <div class="donut" data-centro="${centro}" style="background:conic-gradient(${stops.join(',')})"></div>
+    <div class="leg">${dados.map(d=>`<div class="l"><span class="c" style="background:${d.cor}"></span><span class="n">${d.n}</span><span class="p">${pct(d.p)}</span></div>`).join('')}</div>
+  </div>`;
+}
+function donutV(classes, centro){
+  const tot=classes.reduce((s,c)=>s+c.v,0);
+  const dados=classes.map(c=>({n:c.n, p:c.v/tot*100, cor:c.cor}));
+  let acc=0, stops=[];
+  dados.forEach(d=>{ stops.push(`${d.cor} ${acc}% ${acc+d.p}%`); acc+=d.p; });
+  return `<div class="donut-wrap">
+    <div class="donut" data-centro="${centro}" style="background:conic-gradient(${stops.join(',')})"></div>
+    <div class="leg">${classes.map((c,i)=>`<div class="l"><span class="c" style="background:${c.cor}"></span><span class="n">${c.n}</span><span class="p">${pct(dados[i].p)}</span></div>`).join('')}</div>
+  </div>`;
+}
+function hbars(dados, maxV, fmt, cls=''){
+  return `<div class="hbars">${dados.map(d=>`
+    <div class="hbar">
+      <div class="topo-h"><span class="n">${d[0]}</span><span class="v">${fmt(d[1])}</span></div>
+      <div class="trilho"><div class="fill ${cls}" style="width:${Math.min(100,d[1]/maxV*100)}%"></div></div>
+    </div>`).join('')}</div>`;
+}
+function linhaSVG(vals, labels){
+  const w=560,h=170,p=26;
+  const min=Math.min(...vals)*0.985, max=Math.max(...vals)*1.01;
+  const x=i=>p+(w-2*p)*i/(vals.length-1);
+  const y=v=>h-p-(h-2*p)*(v-min)/(max-min);
+  const pts=vals.map((v,i)=>`${x(i)},${y(v)}`).join(' ');
+  const area=`${p},${h-p} ${pts} ${w-p},${h-p}`;
+  return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:auto">
+    <polygon points="${area}" fill="#1C4A3D" opacity=".08"/>
+    <polyline points="${pts}" fill="none" stroke="#1C4A3D" stroke-width="2.5" stroke-linejoin="round"/>
+    ${vals.map((v,i)=>`<circle cx="${x(i)}" cy="${y(v)}" r="3" fill="#1C4A3D"/>`).join('')}
+    ${labels.map((l,i)=> i%2==0?`<text x="${x(i)}" y="${h-6}" font-size="9.5" fill="#6B7F74" text-anchor="middle" font-family="Inter">${l}</text>`:'').join('')}
+  </svg>`;
+}
+
+/* ============================================================
+   VISTAS
+============================================================ */
+function vHub(){
+  return `<div class="hub">
+    <div class="ola">Bom dia,</div>
+    <h2>Cliente Modelo Arton</h2>
+    <div class="res">Patrimônio consolidado da família: <b>${Rmi(PATRIMONIO.total)}</b> · Atualizado em 16/09/2026</div>
+    <div class="hub-grade">
+      <button class="hub-card" onclick="irModulo('patrimonio')">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l6.5 4"/></svg></span>
+        <h3>Consolidação Patrimonial</h3>
+        <p>Visão macro de toda a estrutura: investimentos, imóveis, participações, veículos e exterior, com árvore familiar e relação de bens.</p>
+        <span class="valor">${Rmi(PATRIMONIO.total)} consolidados</span>
+      </button>
+      <button class="hub-card" onclick="irModulo('imob')">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg></span>
+        <h3>Gestão Imobiliária</h3>
+        <p>Carteira completa de imóveis com performance por ativo, análises de setorização e o data room de cada propriedade.</p>
+        <span class="valor">${IMOB.kpi.qtd} imóveis · ${Rmi(IMOB.kpi.valor)}</span>
+      </button>
+      <button class="hub-card" onclick="irModulo('contas')">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg></span>
+        <h3>Gestão de Contas</h3>
+        <p>Receitas e despesas acompanhadas pela área, com histórico de movimentações e comprovantes arquivados.</p>
+        <span class="valor">Saldo consolidado ${Rmi(CONTAS.kpi.saldo)}</span>
+      </button>
+      <button class="hub-card" onclick="irModulo('invest')">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span>
+        <h3>Investimentos</h3>
+        <p>Consolidação de todas as posições financeiras da família, em todas as instituições, num único painel.</p>
+        <span class="valor">${Rmi(INVEST.total)} · ${INVEST.bancos.length} instituições</span>
+      </button>
+    </div>
+  </div>`;
+}
+
+/* ---------- Consolidação Patrimonial ---------- */
+function vPatrimonio(aba){
+  aba = aba||'geral';
+  const abas = [['geral','Visão geral'],['familia','Família'],['bens','Relação de bens']];
+  let corpo='';
+  if(aba==='geral'){
+    corpo = `
+    <div class="kpis">
+      <div class="kpi"><div class="r">Patrimônio total</div><div class="v">${Rmi(PATRIMONIO.total)}</div><div class="d up">+8,2% em 12 meses</div></div>
+      <div class="kpi"><div class="r">Investimentos financeiros</div><div class="v">${Rmi(598400000)}</div><div class="d">44 posições em 5 instituições</div></div>
+      <div class="kpi"><div class="r">Patrimônio imobiliário</div><div class="v">${Rmi(111200000)}</div><div class="d">52 imóveis e 2 projetos</div></div>
+      <div class="kpi"><div class="r">Dívidas e obrigações</div><div class="v">R$ 0,00</div><div class="d">Nenhuma pendência mapeada</div></div>
+    </div>
+    <div class="grade g32">
+      <div class="cartao">
+        <h3>Balanço patrimonial</h3>
+        <div class="sub">Posição por classe de ativo · setembro de 2026</div>
+        <table class="tb">
+          <thead><tr><th>Classe</th><th class="num">Itens</th><th class="num">Valor</th><th class="num">% do total</th></tr></thead>
+          <tbody>${PATRIMONIO.classes.map(c=>`
+            <tr><td><b>${c.n}</b></td><td class="num">${c.qtd}</td><td class="num">${R$(c.v)}</td><td class="num">${pct(c.v/PATRIMONIO.total*100)}</td></tr>`).join('')}
+            <tr><td><b>Total</b></td><td class="num"></td><td class="num"><b>${R$(PATRIMONIO.total)}</b></td><td class="num"><b>100%</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="cartao">
+        <h3>Distribuição do patrimônio</h3>
+        <div class="sub">Participação de cada classe</div>
+        ${donutV(PATRIMONIO.classes, Rmi(PATRIMONIO.total))}
+      </div>
+    </div>`;
+  }
+  if(aba==='familia'){
+    corpo = `<div class="cartao" style="margin-bottom:14px">
+      <h3>Árvore familiar</h3>
+      <div class="sub">Estrutura por geração, com o patrimônio individual aberto por classe. Base para o planejamento sucessório.</div>
+      ${FAMILIA.map(g=>`
+        <div class="geracao">
+          <h4>${g.ger}</h4>
+          <div class="membros">
+            ${g.membros.map(m=>`
+              <div class="membro">
+                <div class="nm">${m.nm}</div>
+                <div class="info">${m.info}</div>
+                <div class="tot">${Rmi(m.tot)}</div>
+                <details><summary>abrir por classe</summary>
+                  <div class="classes">${Object.entries(m.classes).map(([k,v])=>`<div><span>${k}</span><b>${Rmi(v)}</b></div>`).join('')}</div>
+                </details>
+              </div>`).join('')}
+          </div>
+        </div>`).join('')}
+    </div>`;
+  }
+  if(aba==='bens'){
+    const filtro = window._filtroBens || 'Todos';
+    const cls = ['Todos','Investimentos','Imóveis','Participações','Veículos','Exterior','Outros'];
+    const lista = BENS.filter(b=>filtro==='Todos'||b.cl===filtro);
+    corpo = `
+    <div class="chips">${cls.map(c=>`<button class="chip-f ${c===filtro?'on':''}" onclick="window._filtroBens='${c}';render('patrimonio','bens')">${c}</button>`).join('')}</div>
+    <div class="cartao">
+      <h3>Relação de bens</h3>
+      <div class="sub">Principais itens do patrimônio da família · lista resumida para demonstração</div>
+      <table class="tb">
+        <thead><tr><th>Bem</th><th>Classe</th><th class="num">Valor de referência</th></tr></thead>
+        <tbody>${lista.map(b=>`<tr><td><b>${b.n}</b></td><td><span class="pill neutro">${b.cl}</span></td><td class="num">${R$(b.v)}</td></tr>`).join('')}</tbody>
+      </table>
+    </div>`;
+  }
+  return moldura('Consolidação Patrimonial','Visão integrada de todo o patrimônio da família', abas, aba, 'patrimonio', corpo);
+}
+
+/* ---------- Gestão Imobiliária ---------- */
+function vImob(aba){
+  aba = aba||'geral';
+  const abas = [['geral','Visão geral'],['imoveis','Imóveis'],['analise','Análise'],['docs','Documentos']];
+  let corpo='';
+  if(aba==='geral'){
+    corpo = `
+    <div class="kpis">
+      <div class="kpi"><div class="r">Imóveis na carteira</div><div class="v">${IMOB.kpi.qtd}</div><div class="d">+ ${IMOB.kpi.projetos} projetos imobiliários</div></div>
+      <div class="kpi"><div class="r">Valor patrimonial</div><div class="v">${Rmi(IMOB.kpi.valor)}</div><div class="d up">+6,1% em 12 meses</div></div>
+      <div class="kpi"><div class="r">Receita mensal de locação</div><div class="v">${R$(IMOB.kpi.aluguelMes)}</div><div class="d">${Rmi(IMOB.kpi.aluguelMes*12)} ao ano</div></div>
+      <div class="kpi"><div class="r">Ocupação da carteira</div><div class="v">${pct(IMOB.kpi.ocupacao)}</div><div class="d">2 imóveis vagos em comercialização</div></div>
+    </div>
+    <div class="grade g2">
+      <div class="cartao">
+        <h3>Finalidade da carteira</h3>
+        <div class="sub">Participação sobre o valor patrimonial</div>
+        ${donut(IMOB.finalidade, IMOB.kpi.qtd + '\nimóveis')}
+      </div>
+      <div class="cartao">
+        <h3>Setorização</h3>
+        <div class="sub">Distribuição por setor de mercado</div>
+        ${donut(IMOB.setor, Rmi(IMOB.kpi.valor))}
+      </div>
+    </div>
+    <div class="cartao">
+      <h3>Perfil dos imóveis</h3>
+      <div class="sub">Quantidade por tipo de ativo</div>
+      ${hbars(IMOB.tipos, 17, v=>v+' imóveis')}
+    </div>`;
+  }
+  if(aba==='imoveis'){
+    corpo = `<div class="cartao">
+      <h3>Carteira de imóveis</h3>
+      <div class="sub">Performance por ativo · clique em um imóvel para abrir o data room · amostra de 12 dos 52 ativos</div>
+      <div style="overflow-x:auto">
+      <table class="tb">
+        <thead><tr><th>Imóvel</th><th>Cidade</th><th>Tipo</th><th>Status</th><th class="num">Valor aquisitivo</th><th class="num">Valor de mercado</th><th class="num">R$/m²</th><th class="num">Aluguel mensal</th><th class="num">Despesa</th><th class="num">Rent. mensal</th></tr></thead>
+        <tbody>${IMOB.imoveis.map((im,i)=>{
+          const rent = im.alu>0 ? (im.alu-im.desp)/im.vm*100 : null;
+          const st = im.status==='Locado'||im.status==='Arrendado' ? 'ok' : im.status==='Vago' ? 'red' : im.status==='Em desenvolvimento' ? 'warn' : 'neutro';
+          return `<tr class="clicavel" onclick="abrirDataroom(${i})">
+            <td><b>${im.nome}</b></td><td>${im.cid}</td><td>${im.tipo}</td>
+            <td><span class="pill ${st}">${im.status}</span></td>
+            <td class="num">${R$(im.va)}</td><td class="num">${R$(im.vm)}</td>
+            <td class="num">${im.m2? BR(im.m2):'—'}</td>
+            <td class="num">${im.alu? R$(im.alu):'—'}</td>
+            <td class="num">${im.desp? '<span class="neg">('+BR(im.desp)+')</span>':'—'}</td>
+            <td class="num">${rent!==null? '<b>'+pct(rent)+'</b>':'—'}</td>
+          </tr>`;}).join('')}</tbody>
+      </table></div>
+    </div>`;
+  }
+  if(aba==='analise'){
+    corpo = `
+    <div class="grade g2">
+      <div class="cartao">
+        <h3>Valorização acumulada por setor</h3>
+        <div class="sub">Valor de mercado atual sobre o valor de aquisição</div>
+        ${hbars(IMOB.valorizacao, 250, v=>'+'+pct(v), 'b')}
+      </div>
+      <div class="cartao">
+        <h3>Potencial de locação</h3>
+        <div class="sub">Aluguel contratado sobre o potencial de mercado, por setor</div>
+        ${hbars(IMOB.potencial, 100, v=>pct(v))}
+        <p class="mini" style="margin-top:10px">O setor comercial opera abaixo do potencial: dois contratos com revisional em análise pelo time de locação.</p>
+      </div>
+    </div>
+    <div class="cartao">
+      <h3>Imóveis por administração</h3>
+      <div class="sub">Quem administra cada contrato de locação da carteira hoje</div>
+      ${hbars(IMOB.administradoras, 18, v=>v+' contratos')}
+    </div>`;
+  }
+  if(aba==='docs'){
+    corpo = `<div class="cartao">
+      <h3>Documentos da carteira</h3>
+      <div class="sub">Relatórios mensais e apólices vigentes</div>
+      <table class="tb">
+        <thead><tr><th>Referência</th><th>Documento</th><th></th></tr></thead>
+        <tbody>
+          ${['09/2026','08/2026','07/2026','06/2026','05/2026'].map(m=>`
+          <tr><td>${m}</td><td><b>Relatório de gestão imobiliária · Cliente Modelo Arton</b></td><td class="num"><button class="link-doc">baixar PDF</button></td></tr>`).join('')}
+          <tr><td>Vigente</td><td><b>Apólice de seguro patrimonial · imóveis de locação</b></td><td class="num"><button class="link-doc">baixar PDF</button></td></tr>
+          <tr><td>Vigente</td><td><b>Apólice de seguro residencial · Casa Jardim Europa</b></td><td class="num"><button class="link-doc">baixar PDF</button></td></tr>
+        </tbody>
+      </table>
+    </div>`;
+  }
+  return moldura('Gestão Imobiliária','Carteira, performance e data room dos ativos', abas, aba, 'imob', corpo);
+}
+
+/* ---------- Gestão de Contas ---------- */
+function vContas(aba){
+  aba = aba||'geral';
+  const abas = [['geral','Visão geral'],['movs','Movimentações']];
+  let corpo='';
+  if(aba==='geral'){
+    const maxV = 700;
+    corpo = `
+    <div class="kpis">
+      <div class="kpi"><div class="r">Receitas do mês</div><div class="v">${R$(CONTAS.kpi.rec)}</div><div class="d up">+7,5% vs. média 12m</div></div>
+      <div class="kpi"><div class="r">Despesas do mês</div><div class="v">${R$(Math.abs(CONTAS.kpi.desp))}</div><div class="d down">−2,1% vs. média 12m</div></div>
+      <div class="kpi"><div class="r">Saldo consolidado</div><div class="v">${Rmi(CONTAS.kpi.saldo)}</div><div class="d">Todas as contas da família</div></div>
+      <div class="kpi"><div class="r">Conta tesouraria</div><div class="v">${Rmi(CONTAS.kpi.tesouraria)}</div><div class="d">Conta operada pela Arton</div></div>
+    </div>
+    <div class="grade g32">
+      <div class="cartao">
+        <h3>Receitas × despesas</h3>
+        <div class="sub">Últimos 12 meses · valores em R$ mil</div>
+        <div class="vbars">${CONTAS.meses.map((m,i)=>`
+          <div class="vb">
+            <div class="par">
+              <div class="bR" style="height:${CONTAS.rec[i]/maxV*100}%"></div>
+              <div class="bD" style="height:${CONTAS.des[i]/maxV*100}%"></div>
+            </div>
+            <div class="m">${m.split('-')[0]}</div>
+          </div>`).join('')}
+        </div>
+        <div class="leg-linha"><span><i style="background:var(--pine)"></i>Receitas</span><span><i style="background:#C9A468"></i>Despesas</span></div>
+      </div>
+      <div class="cartao">
+        <h3>Principais despesas</h3>
+        <div class="sub">Por categoria · setembro de 2026</div>
+        ${donut(CONTAS.categorias, 'R$ 302\nmil')}
+      </div>
+    </div>
+    <div class="cartao">
+      <h3>Atividades em andamento</h3>
+      <div class="sub">Demandas em execução pela equipe de gestão de contas</div>
+      <table class="tb"><tbody>${CONTAS.atividades.map(a=>`<tr><td>${a}</td><td class="num"><span class="pill warn">em andamento</span></td></tr>`).join('')}</tbody></table>
+    </div>`;
+  }
+  if(aba==='movs'){
+    corpo = `<div class="cartao">
+      <h3>Últimas movimentações</h3>
+      <div class="sub">Histórico executado nas contas tesouraria e família · setembro de 2026 · cada linha guarda o comprovante</div>
+      <div style="overflow-x:auto">
+      <table class="tb">
+        <thead><tr><th>Data</th><th>Lançamento</th><th class="num">Valor</th><th>Banco</th><th>Conta</th><th>Status</th><th></th></tr></thead>
+        <tbody>${CONTAS.movs.map((m,i)=>`
+          <tr>
+            <td>${m.d}</td><td><b>${m.c}</b></td>
+            <td class="num ${m.v>=0?'pos':'neg'}">${m.v>=0?'+':''}${BR(m.v)}</td>
+            <td>${m.banco}</td><td>${m.conta}</td>
+            <td><span class="pill ok">Pago</span></td>
+            <td class="num"><button class="link-doc" onclick="abrirComprovante(${i})">comprovante</button></td>
+          </tr>`).join('')}</tbody>
+      </table></div>
+    </div>`;
+  }
+  return moldura('Gestão de Contas','Receitas, despesas e histórico com comprovantes', abas, aba, 'contas', corpo);
+}
+
+/* ---------- Investimentos ---------- */
+function vInvest(){
+  const maxB = INVEST.bancos[0].v;
+  const corpo = `
+  <div class="kpis">
+    <div class="kpi"><div class="r">Patrimônio financeiro</div><div class="v">${Rmi(INVEST.total)}</div><div class="d">Consolidado em ${INVEST.bancos.length} instituições</div></div>
+    <div class="kpi"><div class="r">Rentabilidade 12 meses</div><div class="v">${pct(INVEST.rent12)}</div><div class="d up">${(INVEST.rent12/INVEST.cdi12*100).toFixed(0)}% do CDI</div></div>
+    <div class="kpi"><div class="r">CDI no período</div><div class="v">${pct(INVEST.cdi12)}</div><div class="d">Referência 12 meses</div></div>
+    <div class="kpi"><div class="r">Liquidez em até 30 dias</div><div class="v">${pct(INVEST.liquidezD30)}</div><div class="d">${Rmi(INVEST.total*INVEST.liquidezD30/100)} disponíveis</div></div>
+  </div>
+  <div class="grade g32">
+    <div class="cartao">
+      <h3>Evolução do patrimônio financeiro</h3>
+      <div class="sub">Últimos 12 meses · valores em R$ milhões</div>
+      ${linhaSVG(INVEST.evolucao, INVEST.meses)}
+    </div>
+    <div class="cartao">
+      <h3>Alocação por classe</h3>
+      <div class="sub">Carteira consolidada</div>
+      ${donut(INVEST.classes, Rmi(INVEST.total))}
+    </div>
+  </div>
+  <div class="grade g23">
+    <div class="cartao">
+      <h3>Patrimônio por instituição</h3>
+      <div class="sub">Todas as contas da família, em todos os bancos</div>
+      ${hbars(INVEST.bancos.map(b=>[b.n,b.v]), maxB, v=>Rmi(v))}
+    </div>
+    <div class="cartao">
+      <h3>Principais posições</h3>
+      <div class="sub">10 maiores posições da carteira consolidada</div>
+      <div style="overflow-x:auto">
+      <table class="tb">
+        <thead><tr><th>Ativo</th><th>Classe</th><th>Instituição</th><th class="num">Valor</th><th class="num">Indicador</th></tr></thead>
+        <tbody>${INVEST.posicoes.map(p=>`
+          <tr><td><b>${p.n}</b></td><td><span class="pill neutro">${p.cl}</span></td><td>${p.banco}</td><td class="num">${R$(p.v)}</td><td class="num">${p.r}</td></tr>`).join('')}</tbody>
+      </table></div>
+    </div>
+  </div>`;
+  return moldura('Investimentos','Consolidação multi-bancos de todas as posições da família', [], null, 'invest', corpo);
+}
+
+/* ---------- Moldura comum ---------- */
+function moldura(titulo, desc, abas, abaAtiva, mod, corpo){
+  return `
+  ${abas.length?`<div class="subnav">
+    ${abas.map(a=>`<button class="${a[0]===abaAtiva?'on':''}" onclick="render('${mod}','${a[0]}')">${a[1]}</button>`).join('')}
+    <div class="direita">Período <select><option>Set/2026</option><option>Ago/2026</option><option>Jul/2026</option><option>2026</option></select></div>
+  </div>`:''}
+  <div class="conteudo">
+    <div class="titulo-pagina"><h2>${titulo}</h2><span class="desc">${desc}</span></div>
+    ${corpo}
+  </div>`;
+}
+
+/* ============================================================
+   MODAIS
+============================================================ */
+function abrirDataroom(i){
+  const im = IMOB.imoveis[i];
+  window._dr = {i, aba:'ficha'};
+  desenharDataroom();
+}
+function desenharDataroom(){
+  const {i, aba} = window._dr;
+  const im = IMOB.imoveis[i];
+  const abas=[['ficha','Ficha do imóvel'],['docs','Documentos'],['loc','Locação'],['fotos','Fotos']];
+  let corpo='';
+  if(aba==='ficha'){
+    corpo = `<div class="ficha">
+      ${[['Endereço', im.cid + ' · SP'],['Tipo', im.tipo],['Setor', im.setor],
+        ['Status', im.status],['Área', im.area],['Quartos', im.quartos],
+        ['Vagas', im.vagas],['Matrícula', im.mat],['Cartório', im.cart],
+        ['Data de aquisição', im.aq],['Valor de aquisição', R$(im.va)],['Valor de mercado', R$(im.vm)],
+        ['Última avaliação', '05/2026'],['Participação da família', '100%'],['Inscrição imobiliária', '049.' + im.mat.replace('.','') + '-1']
+      ].map(c=>`<div class="campo-f"><div class="r">${c[0]}</div><div class="v">${c[1]}</div></div>`).join('')}
+    </div>`;
+  }
+  if(aba==='docs'){
+    corpo = `<table class="tb">
+      <thead><tr><th>Documento</th><th>Categoria</th><th>Data</th><th></th></tr></thead>
+      <tbody>
+        <tr><td><b>Matrícula atualizada · M. ${im.mat}.pdf</b></td><td>Matrícula</td><td>14/05/2026</td><td class="num"><button class="link-doc">abrir</button></td></tr>
+        <tr><td><b>Relatório de due diligence.pdf</b></td><td>Jurídico</td><td>27/07/2025</td><td class="num"><button class="link-doc">abrir</button></td></tr>
+        <tr><td><b>CND de IPTU.pdf</b></td><td>CND</td><td>13/05/2026</td><td class="num"><button class="link-doc">abrir</button></td></tr>
+        <tr><td><b>CND de condomínio.pdf</b></td><td>CND</td><td>13/05/2026</td><td class="num"><button class="link-doc">abrir</button></td></tr>
+        <tr><td><b>Laudo de avaliação de mercado.pdf</b></td><td>Avaliação</td><td>02/05/2026</td><td class="num"><button class="link-doc">abrir</button></td></tr>
+        <tr><td><b>Vistoria de entrada · fotos e laudo.pdf</b></td><td>Vistoria</td><td>${im.ini!=='—'?im.ini:'—'}</td><td class="num"><button class="link-doc">abrir</button></td></tr>
+      </tbody>
+    </table>`;
+  }
+  if(aba==='loc'){
+    corpo = im.alu>0 ? `<div class="ficha">
+      ${[['Administração', im.imob],['Início do contrato', im.ini],['Fim do contrato', im.fim],
+        ['Valor do aluguel', R$(im.alu)+' / mês'],['Indexador de reajuste', im.idx],['Garantia', 'Seguro fiança'],
+        ['Próximo reajuste', '01/2027'],['Revisional', im.fim.slice(-4)==='2026'?'em análise':'—'],['Inadimplência', 'Nenhuma']
+      ].map(c=>`<div class="campo-f"><div class="r">${c[0]}</div><div class="v">${c[1]}</div></div>`).join('')}
+    </div>` : `<p style="font-size:13.5px;color:var(--moss)">Imóvel sem contrato de locação vigente (${im.status.toLowerCase()}).</p>`;
+  }
+  if(aba==='fotos'){
+    corpo = `<div class="fotos">${['Fachada','Área interna','Vista aérea','Planta','Detalhe','Entorno'].map(f=>`<div class="foto">${f}</div>`).join('')}</div>`;
+  }
+  abrirModal(`
+    <div class="modal-cab">
+      <div><h3>${im.nome}</h3><div class="mini">Data room do imóvel · ${im.cid}</div></div>
+      <button class="fechar" onclick="fecharModal()">×</button>
+    </div>
+    <div class="modal-abas">${abas.map(a=>`<button class="${a[0]===aba?'on':''}" onclick="window._dr.aba='${a[0]}';desenharDataroom()">${a[1]}</button>`).join('')}</div>
+    <div class="modal-corpo">${corpo}</div>
+  `);
+}
+function abrirComprovante(i){
+  const m = CONTAS.movs[i];
+  abrirModal(`
+    <div class="modal-cab">
+      <div><h3>Comprovante de movimentação</h3><div class="mini">Arquivo digital · Arton One</div></div>
+      <button class="fechar" onclick="fecharModal()">×</button>
+    </div>
+    <div class="modal-corpo">
+      <div class="comprovante">
+        <div class="lin"><span>Data da operação</span><b>${m.d}</b></div>
+        <div class="lin"><span>Lançamento</span><b>${m.c}</b></div>
+        <div class="lin"><span>Valor</span><b class="${m.v>=0?'pos':'neg'}">${m.v>=0?'+':''}R$ ${BR(m.v)}</b></div>
+        <div class="lin"><span>Instituição</span><b>${m.banco}</b></div>
+        <div class="lin"><span>Conta</span><b>${m.conta}</b></div>
+        <div class="lin"><span>Autenticação</span><b>A7F2-${1000+i*37}-BR26</b></div>
+        <div class="selo-pago">PAGO</div>
+      </div>
+    </div>
+  `);
+}
+function abrirModal(html){
+  fecharModal();
+  const s=document.createElement('div');
+  s.className='sombra'; s.id='sombra';
+  s.innerHTML=`<div class="modal">${html}</div>`;
+  s.addEventListener('click',e=>{ if(e.target===s) fecharModal(); });
+  document.body.appendChild(s);
+}
+function fecharModal(){ const s=document.getElementById('sombra'); if(s) s.remove(); }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') fecharModal(); });
+
+/* ============================================================
+   NAVEGAÇÃO
+============================================================ */
+const VISTAS = {hub:vHub, patrimonio:vPatrimonio, imob:vImob, contas:vContas, invest:vInvest};
+function render(mod, aba){
+  document.getElementById('vistas').innerHTML = VISTAS[mod](aba);
+  document.querySelectorAll('#nav-modulos button').forEach(b=>b.classList.toggle('on', b.dataset.mod===mod));
+  window.scrollTo(0,0);
+}
+function irModulo(mod){ render(mod); }
+document.querySelectorAll('#nav-modulos button').forEach(b=>{
+  b.addEventListener('click',()=>render(b.dataset.mod));
+});
+document.getElementById('btn-sino').addEventListener('click',()=>{
+  document.getElementById('painel-notif').classList.toggle('oculto');
+});
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#btn-sino') && !e.target.closest('#painel-notif'))
+    document.getElementById('painel-notif').classList.add('oculto');
+});
+
+document.getElementById('form-login').addEventListener('submit',e=>{
+  e.preventDefault();
+  document.getElementById('tela-login').classList.add('oculto');
+  document.getElementById('app').classList.remove('oculto');
+  render('hub');
+});
+</script>
+</body>
+</html>
