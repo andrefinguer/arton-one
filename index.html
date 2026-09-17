@@ -152,6 +152,12 @@
   .hub h2{font-size:30px;font-weight:800;letter-spacing:-0.02em;margin:4px 0 6px}
   .hub .res{font-size:14px;color:#33463F;margin-bottom:34px}
   .hub .res b{font-weight:700}
+  .hub-pizza{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px 30px;margin-bottom:18px}
+  .hub-pizza h3{font-size:15px;font-weight:700;letter-spacing:-0.01em}
+  .hub-pizza .sub{font-size:12.5px;color:var(--moss);margin-top:2px;margin-bottom:18px}
+  .hub-pizza .donut{width:190px;height:190px}
+  .hub-pizza .leg .l{font-size:13px;padding:3px 0}
+  .hub-pizza .leg .l .v{color:var(--moss);margin-left:10px;min-width:96px;text-align:right}
   .hub-grade{display:grid;grid-template-columns:1fr 1fr;gap:18px}
   .hub-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px;text-align:left;display:flex;flex-direction:column;gap:10px;transition:border-color .15s, transform .15s}
   .hub-card:hover{border-color:var(--pine);transform:translateY(-2px)}
@@ -447,6 +453,16 @@ const INVEST = {
    HELPERS DE UI
 ============================================================ */
 const $$ = s => document.querySelector(s);
+function donutHub(){
+  const tot = PATRIMONIO.total;
+  const dados = PATRIMONIO.classes.map(c=>({n:c.n, v:c.v, p:c.v/tot*100, cor:c.cor}));
+  let acc=0, stops=[];
+  dados.forEach(d=>{ stops.push(`${d.cor} ${acc}% ${acc+d.p}%`); acc+=d.p; });
+  return `<div class="donut-wrap">
+    <div class="donut" data-centro="${Rmi(tot)}" style="background:conic-gradient(${stops.join(',')})"></div>
+    <div class="leg">${dados.map(d=>`<div class="l"><span class="c" style="background:${d.cor}"></span><span class="n">${d.n}</span><span class="p">${pct(d.p)}</span><span class="v">${Rmi(d.v)}</span></div>`).join('')}</div>
+  </div>`;
+}
 function donut(dados, centro){
   let acc=0, stops=[];
   dados.forEach(d=>{ stops.push(`${d.cor} ${acc}% ${acc+d.p}%`); acc+=d.p; });
@@ -495,6 +511,11 @@ function vHub(){
     <div class="ola">Bom dia,</div>
     <h2>Cliente Modelo Arton</h2>
     <div class="res">Patrimônio consolidado da família: <b>${Rmi(PATRIMONIO.total)}</b> · Atualizado em 16/09/2026</div>
+    <div class="hub-pizza">
+      <h3>Distribuição do patrimônio</h3>
+      <div class="sub">Participação de cada classe sobre o total consolidado</div>
+      ${donutHub()}
+    </div>
     <div class="hub-grade">
       <button class="hub-card" onclick="irModulo('patrimonio')">
         <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l6.5 4"/></svg></span>
